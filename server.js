@@ -69,6 +69,8 @@ app.get('/', (request, response)=>{
     response.sendFile(__dirname + '/public/index.html')
 })
 
+app.use(express.static(__dirname + '/public'));
+
 app.get('/api/:alienName', (request,response)=>{
     const aliensName = request.params.alienName.toLowerCase()
     if(aliens[aliensName]){
