@@ -1,14 +1,15 @@
-document.querySelector('button').addEventListener('click',apiRequest)
+document.getElementById('getButton').addEventListener('click',apiRequest)
 
 
 
 async function apiRequest(){
-    const alienName = document.querySelector('input').value;
+    const alienName = document.getElementById('alienName').value;
     try{
         const response = await fetch(`https://jennies-alien-field-guide.herokuapp.com/api/${alienName}`)
         const data = await response.json()
         console.log(data);
-        document.getElementById('speciesOutput').value = data[alienName]
+        console.log(data.speciesName)
+        document.getElementById('speciesOutput').textContent = data.speciesName
     } 
     catch(error) {
         console.log(error)

@@ -1,7 +1,18 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const MongoClient = require('mongodb').MongoClient
+const bodyParser = require('body-parser')
 const PORT = 8000
+const uri = process.env.MONGODB_URI;
+
+MongoClient.connect(uri, {useUnifiedTopology: true}, (err,client) => {
+    if(err) return console.error(err)
+    console.log('Connected to Database')
+})
+
+
+app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(cors())
 
@@ -68,6 +79,7 @@ const aliens = {
 app.get('/', (request, response)=>{
     response.sendFile(__dirname + '/public/index.html')
 })
+
 
 app.use(express.static(__dirname + '/public'));
 
