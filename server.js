@@ -6,15 +6,32 @@ const bodyParser = require('body-parser')
 const PORT = 8000
 const uri = process.env.MONGODB_URI;
 
-MongoClient.connect(uri, {useUnifiedTopology: true}, (err,client) => {
-    if(err) return console.error(err)
-    console.log('Connected to Database')
-})
+MongoClient.connect(uri)
+.then(client => {
+    console.log("Connected to Mongo Database!")
+    const db = client.db('aliens-api')
+    const infoCollection = db.connection('alien-info')
 
+    app.get('/', (request, response)=>{
+        response.sendFile(__dirname + '/public/index.html')
+
+        app.get('/api/:alienName', (request,response)=>{
+            const aliensName = request.params.alienName.toLowerCase()
+            if(aliens[aliensName]){
+                response.json(aliens[aliensName])
+            }else{
+                response.json(aliens['humans'])
+            }
+        })
+    })
+
+})
+.catch(err => console.error(err))
 
 app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(cors())
+app.use(express.json())
 
 const aliens = {
     'humans':{
@@ -76,21 +93,12 @@ const aliens = {
     }
 }
 
-app.get('/', (request, response)=>{
-    response.sendFile(__dirname + '/public/index.html')
-})
+
 
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/api/:alienName', (request,response)=>{
-    const aliensName = request.params.alienName.toLowerCase()
-    if(aliens[aliensName]){
-        response.json(aliens[aliensName])
-    }else{
-        response.json(aliens['humans'])
-    }
-})
+
 
 app.listen(process.env.PORT || PORT, ()=>{
     console.log(`The server is running on port ${PORT}! You better go catch it!`)
